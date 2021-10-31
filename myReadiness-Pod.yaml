@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitor-events
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readiness-pod
+  namespace: monitor-events
+spec:
+  containers:
+  - image: nginx
+    name: readiness-container
+    command: ["/bin/sh"]
+    args: ["-c", "sleep 60; nginx -g 'daemon off;'"]
+    readinessProbe:
+      httpGet:
+        path: /error.html
+        port: 80
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 20
+      successThreshold: 1
+      timeoutSeconds: 1
